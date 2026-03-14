@@ -3,6 +3,7 @@
  * Supply Chain & Warehouse Management System
  */
 
+#include <ctype.h>
 #include "product.h"
 
 /* ── File I/O ────────────────────────────────────────────────────────── */
@@ -191,12 +192,14 @@ void search_product(void)
         for (int i = 0; i < count; i++) {
             char lower_name[MAX_NAME_LEN];
             char lower_query[MAX_NAME_LEN];
+            size_t name_len  = strlen(products[i].name);
+            size_t query_len = strlen(name);
             size_t j;
-            for (j = 0; j < strlen(products[i].name); j++)
-                lower_name[j] = (char)(products[i].name[j] | 0x20);
+            for (j = 0; j < name_len; j++)
+                lower_name[j] = (char)tolower((unsigned char)products[i].name[j]);
             lower_name[j] = '\0';
-            for (j = 0; j < strlen(name); j++)
-                lower_query[j] = (char)(name[j] | 0x20);
+            for (j = 0; j < query_len; j++)
+                lower_query[j] = (char)tolower((unsigned char)name[j]);
             lower_query[j] = '\0';
 
             if (strstr(lower_name, lower_query)) {
@@ -324,7 +327,7 @@ void delete_product(void)
     }
 
     printf("\n  About to delete: %s (ID: %d)\n", products[idx].name, id);
-    char confirm[4];
+    char confirm[8];
     read_string("  Confirm deletion? (yes/no): ", confirm, sizeof(confirm));
 
     if (strcmp(confirm, "yes") != 0) {

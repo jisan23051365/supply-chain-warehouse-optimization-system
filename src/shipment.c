@@ -270,7 +270,7 @@ void delete_shipment(void)
 
     printf("\n  About to delete Shipment ID %d (Product: %d, Supplier: %d)\n",
            id, shipments[idx].product_id, shipments[idx].supplier_id);
-    char confirm[4];
+    char confirm[8];
     read_string("  Confirm deletion? (yes/no): ", confirm, sizeof(confirm));
 
     if (strcmp(confirm, "yes") != 0) {

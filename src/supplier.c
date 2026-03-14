@@ -3,6 +3,7 @@
  * Supply Chain & Warehouse Management System
  */
 
+#include <ctype.h>
 #include "supplier.h"
 
 /* ── File I/O ────────────────────────────────────────────────────────── */
@@ -181,12 +182,14 @@ void search_supplier(void)
         for (int i = 0; i < count; i++) {
             char lower_name[MAX_NAME_LEN];
             char lower_query[MAX_NAME_LEN];
+            size_t name_len  = strlen(suppliers[i].name);
+            size_t query_len = strlen(name);
             size_t j;
-            for (j = 0; j < strlen(suppliers[i].name); j++)
-                lower_name[j] = (char)(suppliers[i].name[j] | 0x20);
+            for (j = 0; j < name_len; j++)
+                lower_name[j] = (char)tolower((unsigned char)suppliers[i].name[j]);
             lower_name[j] = '\0';
-            for (j = 0; j < strlen(name); j++)
-                lower_query[j] = (char)(name[j] | 0x20);
+            for (j = 0; j < query_len; j++)
+                lower_query[j] = (char)tolower((unsigned char)name[j]);
             lower_query[j] = '\0';
 
             if (strstr(lower_name, lower_query)) {
@@ -224,46 +227,50 @@ void update_supplier(void)
     printf("\n  Current values shown in [brackets]. Press Enter to keep.\n\n");
 
     Supplier *s = &suppliers[idx];
-    char buf[MAX_ADDR_LEN];
+    char buf_name[MAX_NAME_LEN];
+    char buf_contact[MAX_CONTACT_LEN];
+    char buf_addr[MAX_ADDR_LEN];
+    char buf_email[MAX_EMAIL_LEN];
+    char buf_phone[MAX_PHONE_LEN];
 
     printf("  Name [%s]: ", s->name);
     fflush(stdout);
-    if (fgets(buf, MAX_NAME_LEN, stdin)) {
-        size_t len = strlen(buf);
-        if (len > 0 && buf[len - 1] == '\n') buf[len - 1] = '\0';
-        if (strlen(buf) > 0) strncpy(s->name, buf, MAX_NAME_LEN - 1);
+    if (fgets(buf_name, sizeof(buf_name), stdin)) {
+        size_t len = strlen(buf_name);
+        if (len > 0 && buf_name[len - 1] == '\n') buf_name[len - 1] = '\0';
+        if (strlen(buf_name) > 0) strncpy(s->name, buf_name, MAX_NAME_LEN - 1);
     }
 
     printf("  Contact [%s]: ", s->contact);
     fflush(stdout);
-    if (fgets(buf, MAX_CONTACT_LEN, stdin)) {
-        size_t len = strlen(buf);
-        if (len > 0 && buf[len - 1] == '\n') buf[len - 1] = '\0';
-        if (strlen(buf) > 0) strncpy(s->contact, buf, MAX_CONTACT_LEN - 1);
+    if (fgets(buf_contact, sizeof(buf_contact), stdin)) {
+        size_t len = strlen(buf_contact);
+        if (len > 0 && buf_contact[len - 1] == '\n') buf_contact[len - 1] = '\0';
+        if (strlen(buf_contact) > 0) strncpy(s->contact, buf_contact, MAX_CONTACT_LEN - 1);
     }
 
     printf("  Address [%s]: ", s->address);
     fflush(stdout);
-    if (fgets(buf, MAX_ADDR_LEN, stdin)) {
-        size_t len = strlen(buf);
-        if (len > 0 && buf[len - 1] == '\n') buf[len - 1] = '\0';
-        if (strlen(buf) > 0) strncpy(s->address, buf, MAX_ADDR_LEN - 1);
+    if (fgets(buf_addr, sizeof(buf_addr), stdin)) {
+        size_t len = strlen(buf_addr);
+        if (len > 0 && buf_addr[len - 1] == '\n') buf_addr[len - 1] = '\0';
+        if (strlen(buf_addr) > 0) strncpy(s->address, buf_addr, MAX_ADDR_LEN - 1);
     }
 
     printf("  Email [%s]: ", s->email);
     fflush(stdout);
-    if (fgets(buf, MAX_EMAIL_LEN, stdin)) {
-        size_t len = strlen(buf);
-        if (len > 0 && buf[len - 1] == '\n') buf[len - 1] = '\0';
-        if (strlen(buf) > 0) strncpy(s->email, buf, MAX_EMAIL_LEN - 1);
+    if (fgets(buf_email, sizeof(buf_email), stdin)) {
+        size_t len = strlen(buf_email);
+        if (len > 0 && buf_email[len - 1] == '\n') buf_email[len - 1] = '\0';
+        if (strlen(buf_email) > 0) strncpy(s->email, buf_email, MAX_EMAIL_LEN - 1);
     }
 
     printf("  Phone [%s]: ", s->phone);
     fflush(stdout);
-    if (fgets(buf, MAX_PHONE_LEN, stdin)) {
-        size_t len = strlen(buf);
-        if (len > 0 && buf[len - 1] == '\n') buf[len - 1] = '\0';
-        if (strlen(buf) > 0) strncpy(s->phone, buf, MAX_PHONE_LEN - 1);
+    if (fgets(buf_phone, sizeof(buf_phone), stdin)) {
+        size_t len = strlen(buf_phone);
+        if (len > 0 && buf_phone[len - 1] == '\n') buf_phone[len - 1] = '\0';
+        if (strlen(buf_phone) > 0) strncpy(s->phone, buf_phone, MAX_PHONE_LEN - 1);
     }
 
     if (save_suppliers(suppliers, count))
@@ -291,7 +298,7 @@ void delete_supplier(void)
     }
 
     printf("\n  About to delete: %s (ID: %d)\n", suppliers[idx].name, id);
-    char confirm[4];
+    char confirm[8];
     read_string("  Confirm deletion? (yes/no): ", confirm, sizeof(confirm));
 
     if (strcmp(confirm, "yes") != 0) {
