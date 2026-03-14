@@ -1,3 +1,10 @@
+# Build output
+obj/
+warehouse_mgmt
+
+# Runtime data files
+data/*.dat
+
 # Prerequisites
 *.d
 
